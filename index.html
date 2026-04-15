@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Step Up Business Solutions — CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   VARIABLES
+   ═══════════════════════════════════════════ */
+:root {
+  --teal: #2A7A6E;
+  --teal-dark: #1E5C53;
+  --teal-light: #E0F2F0;
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --white: #FFFFFF;
+  --bg: #F4F6F8;
+  --bg-card: #FFFFFF;
+  --text: #1B2A4A;
+  --text-muted: #6B7A8D;
+  --text-light: #9BA8B7;
+  --border: #E2E8F0;
+  --green: #16A34A;
+  --green-bg: #DCFCE7;
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --yellow: #D97706;
+  --yellow-bg: #FEF3C7;
+  --blue: #2563EB;
+  --blue-bg: #DBEAFE;
+  --sidebar: 220px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Outfit', 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; font-weight: 400; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════ */
+.sidebar {
+  position: fixed; left:0; top:0; bottom:0; width: var(--sidebar);
+  background: var(--navy); padding: 20px 12px; display: flex;
+  flex-direction: column; z-index: 800;
+}
+.sidebar-logo { text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-logo .brand { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); letter-spacing: 0.5px; }
+.sidebar-logo .sub { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1.5px; margin-top: 2px; }
+.sidebar nav { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.nav-btn {
+  padding: 10px 14px; border-radius: 8px; cursor: pointer; display: flex;
+  align-items: center; gap: 10px; font-size: 13px; border: none; background: none;
+  color: rgba(255,255,255,0.6); width: 100%; text-align: left; font-family: var(--font-body);
+  transition: all 0.15s; font-weight: 400;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+.nav-btn.active { background: var(--teal); color: var(--white); font-weight: 500; }
+.nav-btn .icon { font-size: 16px; width: 22px; text-align: center; }
+.sidebar-footer { font-size: 9px; color: rgba(255,255,255,0.25); text-align: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+.conn-status { font-size: 10px; padding: 4px 8px; border-radius: 6px; text-align: center; margin-bottom: 8px; }
+
+/* ═══════════════════════════════════════════
+   MOBILE BAR
+   ═══════════════════════════════════════════ */
+.mobile-bar {
+  display: none; position: fixed; bottom:0; left:0; right:0; background: var(--white);
+  border-top: 1px solid var(--border); z-index: 900; padding: 4px 0 max(4px, env(safe-area-inset-bottom));
+  justify-content: space-around;
+}
+.mobile-bar button {
+  background: none; border: none; display: flex; flex-direction: column; align-items: center;
+  gap: 1px; font-size: 9px; color: var(--text-muted); padding: 6px 4px; font-family: var(--font-body); cursor: pointer;
+}
+.mobile-bar button.active { color: var(--teal); font-weight: 600; }
+.mobile-bar button .icon { font-size: 18px; }
+
+/* ═══════════════════════════════════════════
+   MAIN
+   ═══════════════════════════════════════════ */
+.main { margin-left: var(--sidebar); padding: 20px 24px; min-height: 100vh; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.page-header h1 { font-family: var(--font-display); font-size: 26px; font-weight: 600; }
+.page-header .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* ═══════════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════════ */
+.card { background: var(--bg-card); border-radius: 12px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid var(--border); animation: fadeIn 0.25s ease; }
+.btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 13px; font-family: var(--font-body); transition: all 0.15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--teal); color: var(--white); }
+.btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+.btn-sm { font-size: 11px; padding: 5px 10px; }
+.input { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; background:var(--white); font-family:var(--font-body); outline:none; transition:border-color 0.2s; }
+.input:focus { border-color: var(--teal); }
+select.input { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' stroke='%236B7A8D' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:28px; }
+.badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:0.3px; }
+.b-green { background:var(--green-bg); color:var(--green); }
+.b-red { background:var(--red-bg); color:var(--red); }
+.b-yellow { background:var(--yellow-bg); color:var(--yellow); }
+.b-blue { background:var(--blue-bg); color:var(--blue); }
+.b-gray { background:#F1F5F9; color:#64748B; }
+.field { margin-bottom: 10px; }
+.field label { font-size: 11px; font-weight: 500; color: var(--text-muted); display: block; margin-bottom: 3px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.stat { background: var(--bg-card); border-radius: 10px; padding: 14px 16px; border: 1px solid var(--border); }
+.stat .stat-label { font-size: 10px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.stat .stat-val { font-size: 22px; font-weight: 700; font-family: var(--font-display); }
+.grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.section-title { font-family: var(--font-display); font-size: 16px; color: var(--text); margin-bottom: 12px; font-weight: 600; }
+.table { width:100%; border-collapse:collapse; }
+.table th { padding:10px 12px; background:var(--bg); border-bottom:2px solid var(--border); font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px; text-align:left; }
+.table td { padding:10px 12px; border-bottom:1px solid var(--border); font-size:12px; }
+.table tr:hover { background:#F8FAFC; }
+.clickable { cursor: pointer; }
+.empty-state { text-align:center; padding:40px; color:var(--text-muted); font-size:13px; }
+.bar { height:5px; background:var(--border); border-radius:3px; overflow:hidden; margin-top:4px; }
+.bar-fill { height:100%; border-radius:3px; }
+
+/* ═══════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════ */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); display:flex; justify-content:center; align-items:center; z-index:1000; padding:12px; backdrop-filter:blur(3px); }
+.modal { background:var(--white); border-radius:16px; padding:24px; max-width:540px; width:100%; max-height:85vh; overflow-y:auto; animation:fadeIn 0.2s ease; }
+.modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.modal-head h2 { font-family:var(--font-display); font-size:20px; }
+.modal-close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-muted); }
+.modal-foot { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .sidebar { display: none !important; }
+  .mobile-bar { display: flex !important; }
+  .main { margin-left: 0 !important; padding: 14px; padding-bottom: 72px; }
+  .page-header h1 { font-size: 20px; }
+  .grid-cards { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .field-row, .field-row-3 { grid-template-columns: 1fr; }
+  .hide-m { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar"></div>
+<div class="mobile-bar" id="mobile-bar"></div>
+<main class="main" id="main"></main>
+<div id="modal-root"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   CONFIG & STATE
+   ═══════════════════════════════════════════ */
+// ⚠️ PEGA TU URL DE DEPLOYMENT AQUÍ:
+const API_URL = "https://script.google.com/macros/s/AKfycby1zrGjTE6O2ZIOJBenVTipbOhV2JlwKcajJcdko4JdGnTptuP6DP5V4gDBfFjs0GJARw/exec";
+const STORE = "stepup-crm-v4";
+const TODAY = new Date().toISOString().slice(0,10);
+
+let D = { contactos:[], oportunidades:[], proyectos:[], pagos:[], catalogos:[] };
+let view = "dashboard";
+let online = false;
+
+const NAV = [
+  { key:"dashboard", icon:"📊", label:"Dashboard" },
+  { key:"contactos", icon:"👤", label:"Contactos" },
+  { key:"oportunidades", icon:"💼", label:"Oportunidades" },
+  { key:"proyectos", icon:"📁", label:"Proyectos" },
+  { key:"pagos", icon:"💰", label:"Pagos" },
+];
+
+const fmt = n => new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",minimumFractionDigits:0}).format(n||0);
+const $=s=>document.querySelector(s);
+
+/* ═══════════════════════════════════════════
+   BADGES
+   ═══════════════════════════════════════════ */
+function estadoBadge(st) {
+  const map = {
+    "Ganada":"b-green","Entregado":"b-green","Pagado":"b-green","Cerrado":"b-green",
+    "Perdida":"b-red","Cancelado":"b-red","Vencido":"b-red",
+    "Cotización enviada":"b-blue","Por iniciar":"b-blue",
+    "En seguimiento":"b-yellow","En negociación":"b-yellow","En ejecución":"b-yellow",
+    "Pendiente cliente":"b-yellow","En revisión":"b-yellow","Pausada":"b-yellow","Pausado":"b-yellow",
+    "Anticipo":"b-blue","Pago final":"b-green","Pronto pago":"b-green","Pago recurrente":"b-yellow",
+    "Abono parcial":"b-yellow","Pendiente":"b-yellow",
+  };
+  return `<span class="badge ${map[st]||'b-gray'}">${st||'—'}</span>`;
+}
+
+/* ═══════════════════════════════════════════
+   API
+   ═══════════════════════════════════════════ */
+async function apiGet(sheet) {
+  const r = await fetch(`${API_URL}?action=getAll&sheet=${sheet}`);
+  const j = await r.json();
+  if (!j.success) throw new Error(j.error);
+  return j.data;
+}
+async function apiSave(sheet, data) {
+  try {
+    const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"text/plain"},
+      body: JSON.stringify({ action:"save", sheet, data }) });
+    const j = await r.json();
+    return j.success;
+  } catch { return false; }
+}
+
+async function loadData() {
+  try {
+    const [co, op, pr, pa, ca] = await Promise.all([
+      apiGet("Contacto"), apiGet("Oportunidades"), apiGet("Proyectos"), apiGet("Pagos"), apiGet("Catálogos")
+    ]);
+    D.contactos = co; D.oportunidades = op; D.proyectos = pr; D.pagos = pa; D.catalogos = ca;
+    localStorage.setItem(STORE, JSON.stringify(D));
+    online = true;
+  } catch(e) {
+    console.warn("Offline:", e);
+    try { const s=localStorage.getItem(STORE); if(s) D=JSON.parse(s); } catch{}
+    online = false;
+  }
+}
+function saveLocal() { try{localStorage.setItem(STORE,JSON.stringify(D));}catch{} }
+
+function getCatList(col) {
+  return D.catalogos.map(r=>r[col]).filter(v=>v!=null&&v!=="");
+}
+function getContactName(id) {
+  const c = D.contactos.find(c=>String(c["ID Contacto"])===String(id));
+  return c ? c["Nombre contacto"] : "";
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════ */
+function buildNav() {
+  $("#sidebar").innerHTML = `
+    <div class="sidebar-logo">
+      <div class="brand">STEP UP</div>
+      <div class="sub">BUSINESS SOLUTIONS</div>
+    </div>
+    <div id="conn" class="conn-status" style="background:${online?'rgba(22,163,74,0.15);color:#16A34A':'rgba(217,119,6,0.15);color:#D97706'}">
+      ${online?'🟢 Conectado':'🟡 Local'}
+    </div>
+    <nav>${NAV.map(n=>`
+      <button class="nav-btn ${view===n.key?'active':''}" onclick="go('${n.key}')">
+        <span class="icon">${n.icon}</span>${n.label}
+      </button>`).join("")}
+    </nav>
+    <div class="sidebar-footer">CRM Interno v4.0<br>Step Up Business Solutions</div>`;
+
+  $("#mobile-bar").innerHTML = NAV.map(n=>`
+    <button class="${view===n.key?'active':''}" onclick="go('${n.key}')">
+      <span class="icon">${n.icon}</span>${n.label}
+    </button>`).join("");
+}
+
+function go(v) { view=v; buildNav(); render(); }
+
+/* ═══════════════════════════════════════════
+   RENDER
+   ═══════════════════════════════════════════ */
+function render() {
+  const m = $("#main");
+  const pg = NAV.find(n=>n.key===view);
+  const actions = {
+    contactos: `<button class="btn btn-primary" onclick="openForm('contacto')">+ Contacto</button>`,
+    oportunidades: `<button class="btn btn-primary" onclick="openForm('oportunidad')">+ Oportunidad</button>`,
+    proyectos: `<button class="btn btn-primary" onclick="openForm('proyecto')">+ Proyecto</button>`,
+    pagos: `<button class="btn btn-primary" onclick="openForm('pago')">+ Pago</button>`,
+  };
+  m.innerHTML = `
+    <div class="page-header">
+      <div><h1>${pg.icon} ${pg.label}</h1></div>
+      ${actions[view]||''}
+    </div>
+    <div id="content"></div>`;
+  ({dashboard:rDash, contactos:rContactos, oportunidades:rOportunidades, proyectos:rProyectos, pagos:rPagos})[view]();
+}
+
+/* ═══════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════ */
+function rDash() {
+  const el=$("#content");
+  const ops=D.oportunidades, prs=D.proyectos, pgs=D.pagos;
+  const ganadas=ops.filter(o=>o["Estado Oportunidad"]==="Ganada");
+  const perdidas=ops.filter(o=>o["Estado Oportunidad"]==="Perdida");
+  const abiertas=ops.filter(o=>!["Ganada","Perdida","Pausada"].includes(o["Estado Oportunidad"]));
+  const activos=prs.filter(p=>["Por iniciar","En ejecución","En revisión","Pendiente cliente"].includes(p["Estado proyecto"]));
+  const entregados=prs.filter(p=>p["Estado proyecto"]==="Entregado");
+  const totalCotizado=ops.reduce((s,o)=>s+(Number(o["Valor cotizado"])||0),0);
+  const totalGanado=prs.reduce((s,p)=>s+(Number(p["Valor vendido"])||0),0);
+  const totalPerdido=perdidas.reduce((s,o)=>s+(Number(o["Valor cotizado"])||0),0);
+  const totalRecibido=pgs.reduce((s,p)=>s+(Number(p["Monto recibido"])||0),0);
+  const pendiente=totalGanado-totalRecibido;
+  const ticket=ganadas.length?totalGanado/ganadas.length:0;
+  const tasa=ops.length?(ganadas.length/ops.length):0;
+
+  // Pipeline values
+  const pipeStages=["Cotización enviada","En seguimiento","En negociación"];
+  const pipeData=pipeStages.map(st=>({
+    label:st,
+    count:ops.filter(o=>o["Estado Oportunidad"]===st).length,
+    value:ops.filter(o=>o["Estado Oportunidad"]===st).reduce((s,o)=>s+(Number(o["Valor cotizado"])||0),0)
+  }));
+
+  // Services
+  const svcs=["Landing","CRM","Base de datos","Automatización","Mantenimiento"];
+  const svcData=svcs.map(s=>({
+    name:s,
+    cotizadas:ops.filter(o=>o["Servicio"]===s).length,
+    ganadas:ganadas.filter(o=>o["Servicio"]===s).length,
+  })).filter(s=>s.cotizadas>0||s.ganadas>0);
+
+  // Motivos
+  const motivos={};
+  perdidas.forEach(o=>{const m=o["Motivo de la Pérdida"]||"Sin especificar";motivos[m]=(motivos[m]||0)+1;});
+  const maxMotivo=Math.max(...Object.values(motivos),1);
+
+  el.innerHTML = `
+    <div class="grid-stats" style="margin-bottom:14px">
+      ${[
+        {l:"Contactos",v:D.contactos.length,c:"var(--teal)"},
+        {l:"Op. Abiertas",v:abiertas.length,c:"var(--blue)"},
+        {l:"Ganadas",v:ganadas.length,c:"var(--green)"},
+        {l:"Perdidas",v:perdidas.length,c:"var(--red)"},
+        {l:"Proyectos Activos",v:activos.length,c:"var(--yellow)"},
+        {l:"Tasa Conversión",v:Math.round(tasa*100)+"%",c:"var(--teal)"},
+      ].map(s=>`<div class="stat"><div class="stat-label">${s.l}</div><div class="stat-val" style="color:${s.c}">${s.v}</div></div>`).join("")}
+    </div>
+
+    <div class="grid-stats" style="margin-bottom:14px">
+      ${[
+        {l:"Total Cotizado",v:fmt(totalCotizado),c:"var(--text)"},
+        {l:"Total Ganado",v:fmt(totalGanado),c:"var(--green)"},
+        {l:"Total Recibido",v:fmt(totalRecibido),c:"var(--teal)"},
+        {l:"Pendiente Cobrar",v:fmt(Math.max(pendiente,0)),c:pendiente>0?"var(--yellow)":"var(--green)"},
+        {l:"Total Perdido",v:fmt(totalPerdido),c:"var(--red)"},
+        {l:"Ticket Promedio",v:fmt(ticket),c:"var(--teal)"},
+      ].map(s=>`<div class="stat"><div class="stat-label">${s.l}</div><div class="stat-val" style="color:${s.c};font-size:18px">${s.v}</div></div>`).join("")}
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="section-title">Pipeline</h3>
+        ${pipeData.map(p=>`
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+              <span>${estadoBadge(p.label)} <strong>${p.count}</strong></span>
+              <span style="color:var(--text-muted)">${fmt(p.value)}</span>
+            </div>
+            <div class="bar"><div class="bar-fill" style="width:${totalCotizado?((p.value/totalCotizado)*100):0}%;background:var(--teal)"></div></div>
+          </div>
+        `).join("")}
+        ${pipeData.every(p=>p.count===0)?'<div class="empty-state">Sin oportunidades abiertas</div>':""}
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Servicios Cotizados vs Ganados</h3>
+        ${svcData.length===0?'<div class="empty-state">Sin datos</div>':
+          svcData.map(s=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+              <span style="font-weight:500">${s.name}</span>
+              <span>Cotizadas: <strong>${s.cotizadas}</strong> | Ganadas: <strong style="color:var(--green)">${s.ganadas}</strong></span>
+            </div>
+          `).join("")}
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Motivos de Pérdida</h3>
+        ${Object.keys(motivos).length===0?'<div class="empty-state">Sin pérdidas registradas</div>':
+          Object.entries(motivos).sort((a,b)=>b[1]-a[1]).map(([m,c])=>`
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px">
+                <span>${m}</span><span style="color:var(--text-muted)">${c}</span>
+              </div>
+              <div class="bar"><div class="bar-fill" style="width:${(c/maxMotivo)*100}%;background:var(--red)"></div></div>
+            </div>
+          `).join("")}
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Estado de Pagos</h3>
+        ${[
+          {l:"Pagados",v:pgs.filter(p=>p["Estado pago"]==="Pagado").length,c:"green"},
+          {l:"Abono parcial",v:pgs.filter(p=>p["Estado pago"]==="Abono parcial").length,c:"yellow"},
+          {l:"Pendientes",v:pgs.filter(p=>p["Estado pago"]==="Pendiente").length,c:"yellow"},
+          {l:"Vencidos",v:pgs.filter(p=>p["Estado pago"]==="Vencido").length,c:"red"},
+        ].map(s=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px">
+            <span>${s.l}</span>${estadoBadge(s.l==="Pagados"?"Pagado":s.l==="Abono parcial"?"Abono parcial":s.l==="Pendientes"?"Pendiente":"Vencido")} <strong>${s.v}</strong>
+          </div>
+        `).join("")}
+      </div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   CONTACTOS
+   ═══════════════════════════════════════════ */
+function rContactos() {
+  const el=$("#content");
+  const data=D.contactos;
+  if(!data.length) { el.innerHTML='<div class="card empty-state">Sin contactos registrados. Presiona + Contacto para empezar.</div>'; return; }
+
+  el.innerHTML=`<div class="grid-cards">${data.map(c=>{
+    const ops=D.oportunidades.filter(o=>String(o["ID Contacto"])===String(c["ID Contacto"]));
+    const ganadas=ops.filter(o=>o["Estado Oportunidad"]==="Ganada").length;
+    return `<div class="card clickable" onclick="viewDetail('contacto','${c["ID Contacto"]}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div>
+          <div style="font-weight:600;font-size:14px">${c["Nombre contacto"]}</div>
+          <div style="font-size:11px;color:var(--text-muted)">${c["Negocio / Especialidad"]||""} • ${c["Ciudad"]||""}</div>
+        </div>
+        <span class="badge b-gray" style="font-size:9px">${c["ID Contacto"]}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap">
+        <span>📱 ${c["WhatsApp"]||"—"}</span>
+        <span>📧 ${c["Email"]||"—"}</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;font-size:11px">
+        ${estadoBadge(c["Servicio de Interés"]||c["Servicio interés"])}
+        <span style="color:var(--text-muted)">💼 ${ops.length} op. | ✅ ${ganadas} ganadas</span>
+      </div>
+      ${c["Observaciones"]?`<div style="font-size:11px;color:var(--text-light);margin-top:6px;font-style:italic">${c["Observaciones"].substring(0,80)}${c["Observaciones"].length>80?"...":""}</div>`:""}
+    </div>`}).join("")}</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   OPORTUNIDADES
+   ═══════════════════════════════════════════ */
+function rOportunidades() {
+  const el=$("#content");
+  const data=[...D.oportunidades].sort((a,b)=>(b["Fecha cotización"]||"").localeCompare(a["Fecha cotización"]||""));
+  if(!data.length) { el.innerHTML='<div class="card empty-state">Sin oportunidades registradas.</div>'; return; }
+
+  el.innerHTML=`<div class="card" style="padding:0;overflow-x:auto">
+    <table class="table"><thead><tr>
+      <th>ID</th><th>Contacto</th><th>Servicio</th><th>Plan</th>
+      <th>Valor</th><th class="hide-m">Fecha</th><th>Estado</th><th class="hide-m">Resumen</th>
+    </tr></thead><tbody>
+    ${data.map(o=>`<tr class="clickable" onclick="openForm('oportunidad','${o["ID Oportunidad"]}')">
+      <td><span class="badge b-gray" style="font-size:9px">${o["ID Oportunidad"]}</span></td>
+      <td style="font-weight:500">${o["Nombre contacto"]||getContactName(o["ID Contacto"])}</td>
+      <td>${o["Servicio"]||"—"}</td>
+      <td class="hide-m" style="font-size:11px">${o["Plan"]||"—"}</td>
+      <td style="font-weight:500">${fmt(o["Valor cotizado"])}</td>
+      <td class="hide-m">${o["Fecha cotización"]||"—"}</td>
+      <td>${estadoBadge(o["Estado Oportunidad"])}</td>
+      <td class="hide-m" style="font-size:11px;color:var(--text-muted);max-width:150px;overflow:hidden;text-overflow:ellipsis">${o["Resumen"]||""}</td>
+    </tr>`).join("")}
+    </tbody></table></div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PROYECTOS
+   ═══════════════════════════════════════════ */
+function rProyectos() {
+  const el=$("#content");
+  const data=D.proyectos;
+  if(!data.length) { el.innerHTML='<div class="card empty-state">Sin proyectos registrados.</div>'; return; }
+
+  el.innerHTML=`<div class="grid-cards">${data.map(p=>{
+    const pagos=D.pagos.filter(pg=>String(pg["ID Proyecto"])===String(p["ID Proyecto"]));
+    const recibido=pagos.reduce((s,pg)=>s+(Number(pg["Monto recibido"])||0),0);
+    const valor=Number(p["Valor vendido"])||0;
+    const saldo=valor-recibido;
+    return `<div class="card clickable" onclick="openForm('proyecto','${p["ID Proyecto"]}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div>
+          <div style="font-weight:600;font-size:14px">${p["Nombre contacto"]||getContactName(p["ID Contacto"])}</div>
+          <div style="font-size:11px;color:var(--text-muted)">${p["Servicio"]||""} • ${p["Plan contratado"]||""}</div>
+        </div>
+        ${estadoBadge(p["Estado proyecto"])}
+      </div>
+      <div style="display:flex;gap:12px;font-size:12px;margin-top:8px;flex-wrap:wrap">
+        <span>💰 ${fmt(valor)}</span>
+        <span style="color:${saldo>0?'var(--yellow)':'var(--green)'}">Saldo: ${fmt(Math.max(saldo,0))}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px">
+        📅 Inicio: ${p["Fecha inicio"]||"—"} | Entrega: ${p["Fecha entrega estimada"]||"—"}
+      </div>
+      ${p["Observaciones"]?`<div style="font-size:11px;color:var(--text-light);margin-top:4px;font-style:italic">${p["Observaciones"].substring(0,80)}...</div>`:""}
+    </div>`}).join("")}</div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PAGOS
+   ═══════════════════════════════════════════ */
+function rPagos() {
+  const el=$("#content");
+  const data=[...D.pagos].sort((a,b)=>(b["Fecha pago"]||"").localeCompare(a["Fecha pago"]||""));
+  if(!data.length) { el.innerHTML='<div class="card empty-state">Sin pagos registrados.</div>'; return; }
+
+  el.innerHTML=`<div class="card" style="padding:0;overflow-x:auto">
+    <table class="table"><thead><tr>
+      <th>ID</th><th>Contacto</th><th>Proyecto</th><th>Tipo</th>
+      <th>Monto</th><th>Fecha</th><th>Método</th><th>Estado</th>
+    </tr></thead><tbody>
+    ${data.map(p=>`<tr class="clickable" onclick="openForm('pago','${p["ID Pago"]}')">
+      <td><span class="badge b-gray" style="font-size:9px">${p["ID Pago"]}</span></td>
+      <td style="font-weight:500">${p["Nombre contacto"]||getContactName(p["ID Contacto"])}</td>
+      <td><span class="badge b-gray" style="font-size:9px">${p["ID Proyecto"]||"—"}</span></td>
+      <td>${estadoBadge(p["Tipo"])}</td>
+      <td style="font-weight:600">${fmt(p["Monto recibido"])}</td>
+      <td>${p["Fecha pago"]||"—"}</td>
+      <td class="hide-m">${p["Método pago"]||"—"}</td>
+      <td>${estadoBadge(p["Estado pago"])}</td>
+    </tr>`).join("")}
+    </tbody></table></div>`;
+}
+
+/* ═══════════════════════════════════════════
+   DETAIL VIEW
+   ═══════════════════════════════════════════ */
+function viewDetail(type, id) {
+  if(type==="contacto") {
+    const c=D.contactos.find(x=>String(x["ID Contacto"])===String(id));
+    if(!c) return;
+    const ops=D.oportunidades.filter(o=>String(o["ID Contacto"])===String(id));
+    const prs=D.proyectos.filter(p=>String(p["ID Contacto"])===String(id));
+    const pgs=D.pagos.filter(p=>String(p["ID Contacto"])===String(id));
+    const totalRecibido=pgs.reduce((s,p)=>s+(Number(p["Monto recibido"])||0),0);
+
+    showModal(`
+      <div class="modal-head"><h2>${c["Nombre contacto"]}</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:14px">
+        <div>📱 ${c["WhatsApp"]||"—"}</div>
+        <div>📧 ${c["Email"]||"—"}</div>
+        <div>🏢 ${c["Negocio / Especialidad"]||"—"}</div>
+        <div>📍 ${c["Ciudad"]||"—"}</div>
+        <div>📅 ${c["Fecha contacto"]||"—"}</div>
+        <div>📡 ${c["Canal de ingreso lead"]||"—"}</div>
+        <div style="grid-column:1/-1">💰 Total recibido: <strong>${fmt(totalRecibido)}</strong></div>
+      </div>
+      ${c["Observaciones"]?`<div style="background:var(--bg);padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px">${c["Observaciones"]}</div>`:""}
+      <h3 class="section-title" style="font-size:14px">Oportunidades (${ops.length})</h3>
+      ${ops.map(o=>`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;display:flex;justify-content:space-between">
+        <span>${o["Servicio"]} — ${o["Plan"]||""}</span>
+        <span>${estadoBadge(o["Estado Oportunidad"])} ${fmt(o["Valor cotizado"])}</span>
+      </div>`).join("")||'<div style="font-size:12px;color:var(--text-muted)">Sin oportunidades</div>'}
+      <h3 class="section-title" style="font-size:14px;margin-top:12px">Proyectos (${prs.length})</h3>
+      ${prs.map(p=>`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;display:flex;justify-content:space-between">
+        <span>${p["Servicio"]} — ${p["Plan contratado"]||""}</span>
+        <span>${estadoBadge(p["Estado proyecto"])} ${fmt(p["Valor vendido"])}</span>
+      </div>`).join("")||'<div style="font-size:12px;color:var(--text-muted)">Sin proyectos</div>'}
+      <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="openForm('contacto','${id}');closeModal()">✏️ Editar</button>
+      </div>
+    `);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   FORMS
+   ═══════════════════════════════════════════ */
+function sel(name, options, selected) {
+  return `<select class="input" id="f-${name}">
+    <option value="">— Seleccionar —</option>
+    ${options.map(o=>`<option${o===selected?' selected':''}>${o}</option>`).join("")}
+  </select>`;
+}
+
+function openForm(type, editId) {
+  let html = "";
+
+  if(type==="contacto") {
+    const c = editId ? D.contactos.find(x=>String(x["ID Contacto"])===String(editId)) : null;
+    const v = c || {};
+    html=`
+      <div class="modal-head"><h2>${c?"Editar Contacto":"Nuevo Contacto"}</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>ID Contacto *</label><input class="input" id="f-id" value="${v["ID Contacto"]||""}" ${c?'readonly style="background:#f1f5f9"':''}></div>
+      <div class="field-row">
+        <div class="field"><label>Nombre *</label><input class="input" id="f-nombre" value="${v["Nombre contacto"]||""}"></div>
+        <div class="field"><label>Negocio / Especialidad</label><input class="input" id="f-negocio" value="${v["Negocio / Especialidad"]||""}"></div>
+      </div>
+      <div class="field-row-3">
+        <div class="field"><label>Ciudad</label>${sel("ciudad", getCatList("Ciudad"), v["Ciudad"])}</div>
+        <div class="field"><label>WhatsApp *</label><input class="input" id="f-whatsapp" value="${v["WhatsApp"]||""}"></div>
+        <div class="field"><label>Email</label><input class="input" id="f-email" value="${v["Email"]||""}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Canal de ingreso</label>${sel("canal", getCatList("Canal"), v["Canal de ingreso lead"])}</div>
+        <div class="field"><label>Servicio de interés</label>${sel("servicio", getCatList("Servicio"), v["Servicio de Interés"]||v["Servicio interés"])}</div>
+      </div>
+      <div class="field"><label>Observaciones</label><textarea class="input" id="f-obs" rows="2" style="resize:vertical">${v["Observaciones"]||""}</textarea></div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveContacto('${editId||''}')">💾 Guardar</button>
+      </div>`;
+  }
+
+  if(type==="oportunidad") {
+    const o = editId ? D.oportunidades.find(x=>String(x["ID Oportunidad"])===String(editId)) : null;
+    const v = o || {};
+    html=`
+      <div class="modal-head"><h2>${o?"Editar Oportunidad":"Nueva Oportunidad"}</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div class="field-row">
+        <div class="field"><label>ID Oportunidad *</label><input class="input" id="f-id" value="${v["ID Oportunidad"]||""}" ${o?'readonly style="background:#f1f5f9"':''}></div>
+        <div class="field"><label>ID Contacto *</label><input class="input" id="f-contacto" value="${v["ID Contacto"]||""}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Servicio</label>${sel("servicio", getCatList("Servicio"), v["Servicio"])}</div>
+        <div class="field"><label>Plan</label>${sel("plan", getCatList("Plan"), v["Plan"])}</div>
+      </div>
+      <div class="field-row-3">
+        <div class="field"><label>Valor cotizado</label><input class="input" id="f-valor" type="number" value="${v["Valor cotizado"]||""}"></div>
+        <div class="field"><label>Fecha cotización</label><input class="input" id="f-fecha" type="date" value="${v["Fecha cotización"]||TODAY}"></div>
+        <div class="field"><label>Fecha límite</label><input class="input" id="f-limite" type="date" value="${v["Fecha límite"]||""}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Estado</label>${sel("estado", getCatList("Estado Oportunidad"), v["Estado Oportunidad"])}</div>
+        <div class="field"><label>Motivo de pérdida</label>${sel("motivo", getCatList("Motivo de Pérdida"), v["Motivo de la Pérdida"])}</div>
+      </div>
+      <div class="field"><label>Resumen</label><input class="input" id="f-resumen" value="${v["Resumen"]||""}"></div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveOportunidad('${editId||''}')">💾 Guardar</button>
+      </div>`;
+  }
+
+  if(type==="proyecto") {
+    const p = editId ? D.proyectos.find(x=>String(x["ID Proyecto"])===String(editId)) : null;
+    const v = p || {};
+    html=`
+      <div class="modal-head"><h2>${p?"Editar Proyecto":"Nuevo Proyecto"}</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div class="field-row-3">
+        <div class="field"><label>ID Proyecto *</label><input class="input" id="f-id" value="${v["ID Proyecto"]||""}" ${p?'readonly style="background:#f1f5f9"':''}></div>
+        <div class="field"><label>ID Contacto *</label><input class="input" id="f-contacto" value="${v["ID Contacto"]||""}"></div>
+        <div class="field"><label>ID Oportunidad</label><input class="input" id="f-oportunidad" value="${v["ID Oportunidad"]||""}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Servicio</label>${sel("servicio", getCatList("Servicio"), v["Servicio"])}</div>
+        <div class="field"><label>Plan contratado</label>${sel("plan", getCatList("Plan"), v["Plan contratado"])}</div>
+      </div>
+      <div class="field-row-3">
+        <div class="field"><label>Fecha inicio</label><input class="input" id="f-inicio" type="date" value="${v["Fecha inicio"]||TODAY}"></div>
+        <div class="field"><label>Entrega estimada</label><input class="input" id="f-entrega" type="date" value="${v["Fecha entrega estimada"]||""}"></div>
+        <div class="field"><label>Entrega real</label><input class="input" id="f-real" type="date" value="${v["Fecha entrega real"]||""}"></div>
+      </div>
+      <div class="field-row-3">
+        <div class="field"><label>Estado</label>${sel("estado", getCatList("Estado Proyecto"), v["Estado proyecto"])}</div>
+        <div class="field"><label>Responsable</label>${sel("responsable", getCatList("Responsable"), v["Responsable"])}</div>
+        <div class="field"><label>Referido por</label><input class="input" id="f-referido" value="${v["Referido por"]||""}"></div>
+      </div>
+      <div class="field"><label>Valor vendido</label><input class="input" id="f-valor" type="number" value="${v["Valor vendido"]||""}"></div>
+      <div class="field"><label>Link del proyecto</label><input class="input" id="f-link" value="${v["Link del proyecto"]||""}"></div>
+      <div class="field"><label>Observaciones</label><textarea class="input" id="f-obs" rows="2" style="resize:vertical">${v["Observaciones"]||""}</textarea></div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveProyecto('${editId||''}')">💾 Guardar</button>
+      </div>`;
+  }
+
+  if(type==="pago") {
+    const p = editId ? D.pagos.find(x=>String(x["ID Pago"])===String(editId)) : null;
+    const v = p || {};
+    html=`
+      <div class="modal-head"><h2>${p?"Editar Pago":"Nuevo Pago"}</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div class="field-row-3">
+        <div class="field"><label>ID Pago *</label><input class="input" id="f-id" value="${v["ID Pago"]||""}" ${p?'readonly style="background:#f1f5f9"':''}></div>
+        <div class="field"><label>ID Proyecto *</label><input class="input" id="f-proyecto" value="${v["ID Proyecto"]||""}"></div>
+        <div class="field"><label>ID Contacto *</label><input class="input" id="f-contacto" value="${v["ID Contacto"]||""}"></div>
+      </div>
+      <div class="field-row-3">
+        <div class="field"><label>Tipo</label>${sel("tipo", getCatList("Tipo de Pago"), v["Tipo"])}</div>
+        <div class="field"><label>Monto recibido *</label><input class="input" id="f-monto" type="number" value="${v["Monto recibido"]||""}"></div>
+        <div class="field"><label>Fecha pago</label><input class="input" id="f-fecha" type="date" value="${v["Fecha pago"]||TODAY}"></div>
+      </div>
+      <div class="field-row-3">
+        <div class="field"><label>Método pago</label>${sel("metodo", getCatList("Método de Pago"), v["Método pago"])}</div>
+        <div class="field"><label>Estado pago</label>${sel("estado", getCatList("Estado de Pago"), v["Estado pago"])}</div>
+        <div class="field"><label>Fecha compromiso saldo</label><input class="input" id="f-compromiso" type="date" value="${v["Fecha compromiso saldo"]||""}"></div>
+      </div>
+      <div class="field"><label>Observaciones</label><textarea class="input" id="f-obs" rows="2" style="resize:vertical">${v["Observaciones"]||""}</textarea></div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="savePago('${editId||''}')">💾 Guardar</button>
+      </div>`;
+  }
+
+  showModal(html);
+}
+
+/* ═══════════════════════════════════════════
+   SAVE FUNCTIONS
+   ═══════════════════════════════════════════ */
+function saveContacto(editId) {
+  const id = $("#f-id").value.trim();
+  const nombre = $("#f-nombre").value.trim();
+  if(!id||!nombre) return alert("ID y Nombre son obligatorios.");
+  const reg = {
+    "ID Contacto": id,
+    "Fecha contacto": editId ? (D.contactos.find(c=>c["ID Contacto"]===editId)||{})["Fecha contacto"]||TODAY : TODAY,
+    "Nombre contacto": nombre,
+    "Negocio / Especialidad": $("#f-negocio").value.trim(),
+    "Ciudad": $("#f-ciudad").value,
+    "WhatsApp": $("#f-whatsapp").value.trim(),
+    "Email": $("#f-email").value.trim(),
+    "Canal de ingreso lead": $("#f-canal").value,
+    "Servicio de Interés": $("#f-servicio").value,
+    "Observaciones": $("#f-obs").value.trim(),
+  };
+  if(editId) { const i=D.contactos.findIndex(c=>String(c["ID Contacto"])===String(editId)); if(i>=0) D.contactos[i]=reg; }
+  else D.contactos.push(reg);
+  apiSave("Contacto", reg);
+  saveLocal(); closeModal(); render();
+}
+
+function saveOportunidad(editId) {
+  const id = $("#f-id").value.trim();
+  if(!id) return alert("ID Oportunidad es obligatorio.");
+  const reg = {
+    "ID Oportunidad": id,
+    "ID Contacto": $("#f-contacto").value.trim(),
+    "Nombre contacto": getContactName($("#f-contacto").value.trim()),
+    "Servicio": $("#f-servicio").value,
+    "Plan": $("#f-plan").value,
+    "Valor cotizado": Number($("#f-valor").value)||0,
+    "Fecha cotización": $("#f-fecha").value,
+    "Fecha límite": $("#f-limite").value,
+    "Estado Oportunidad": $("#f-estado").value,
+    "Motivo de la Pérdida": $("#f-motivo").value,
+    "Resumen": $("#f-resumen").value.trim(),
+  };
+  if(editId) { const i=D.oportunidades.findIndex(o=>String(o["ID Oportunidad"])===String(editId)); if(i>=0) D.oportunidades[i]=reg; }
+  else D.oportunidades.push(reg);
+  apiSave("Oportunidades", reg);
+  saveLocal(); closeModal(); render();
+}
+
+function saveProyecto(editId) {
+  const id = $("#f-id").value.trim();
+  if(!id) return alert("ID Proyecto es obligatorio.");
+  const reg = {
+    "ID Proyecto": id,
+    "ID Contacto": $("#f-contacto").value.trim(),
+    "Nombre contacto": getContactName($("#f-contacto").value.trim()),
+    "ID Oportunidad": $("#f-oportunidad").value.trim(),
+    "Servicio": $("#f-servicio").value,
+    "Plan contratado": $("#f-plan").value,
+    "Fecha inicio": $("#f-inicio").value,
+    "Fecha entrega estimada": $("#f-entrega").value,
+    "Fecha entrega real": $("#f-real").value,
+    "Estado proyecto": $("#f-estado").value,
+    "Responsable": $("#f-responsable").value,
+    "Referido por": $("#f-referido").value.trim(),
+    "Valor vendido": Number($("#f-valor").value)||0,
+    "Saldo pendiente": "",
+    "Link del proyecto": $("#f-link").value.trim(),
+    "Observaciones": $("#f-obs").value.trim(),
+  };
+  if(editId) { const i=D.proyectos.findIndex(p=>String(p["ID Proyecto"])===String(editId)); if(i>=0) D.proyectos[i]=reg; }
+  else D.proyectos.push(reg);
+  apiSave("Proyectos", reg);
+  saveLocal(); closeModal(); render();
+}
+
+function savePago(editId) {
+  const id = $("#f-id").value.trim();
+  if(!id) return alert("ID Pago es obligatorio.");
+  const reg = {
+    "ID Pago": id,
+    "ID Proyecto": $("#f-proyecto").value.trim(),
+    "ID Contacto": $("#f-contacto").value.trim(),
+    "Nombre contacto": getContactName($("#f-contacto").value.trim()),
+    "Tipo": $("#f-tipo").value,
+    "Monto recibido": Number($("#f-monto").value)||0,
+    "Fecha pago": $("#f-fecha").value,
+    "Método pago": $("#f-metodo").value,
+    "Estado pago": $("#f-estado").value,
+    "Fecha compromiso saldo": $("#f-compromiso").value,
+    "Observaciones": $("#f-obs").value.trim(),
+  };
+  if(editId) { const i=D.pagos.findIndex(p=>String(p["ID Pago"])===String(editId)); if(i>=0) D.pagos[i]=reg; }
+  else D.pagos.push(reg);
+  apiSave("Pagos", reg);
+  saveLocal(); closeModal(); render();
+}
+
+/* ═══════════════════════════════════════════
+   MODAL UTILS
+   ═══════════════════════════════════════════ */
+function showModal(html) { $("#modal-root").innerHTML=`<div class="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`; }
+function closeModal() { $("#modal-root").innerHTML=""; }
+
+/* ═══════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════ */
+async function init() {
+  $("#main").innerHTML=`<div style="display:flex;justify-content:center;align-items:center;min-height:60vh;flex-direction:column;gap:10px">
+    <div style="font-family:var(--font-display);font-size:24px;font-weight:600;color:var(--teal)">Step Up Business Solutions</div>
+    <div style="font-size:13px;color:var(--text-muted)">Conectando con Google Sheets...</div></div>`;
+  await loadData();
+  buildNav();
+  render();
+}
+init();
+</script>
+</body>
+</html>
